@@ -12,18 +12,19 @@ namespace prjToDoList
         static void Main(string[] args)
         {
             List<clsTask> lTasks = new List<clsTask>();
-            ReadTasksFromFile(lTasks);
+            ReadTasksFromFile(lTasks);//programın başında eğer eski veriler var ise onları okumaya yarıyor.
             int iSelection;
             do
             {
-                Console.WriteLine("1- Add New Task");
+                Console.WriteLine("1- Add New Task");//kullanıcıya gösterilecek seçenekler
                 Console.WriteLine("2- Show finished tasks");
                 Console.WriteLine("3- Show unfinished tasks");
                 Console.WriteLine("4- Sort the list by due date");
                 Console.WriteLine("5- Sort the list by priority");
                 Console.WriteLine("6- Mark task as finished");
                 Console.WriteLine("7- Save list to file");
-                iSelection = int.Parse(Console.ReadLine());
+                Console.WriteLine("8- Exit!");
+                iSelection = int.Parse(Console.ReadLine());//kullanıcın seçimi iSelection değişkenine atanıyor
                 Console.Clear();
                 switch (iSelection)
                 {
@@ -43,7 +44,7 @@ namespace prjToDoList
                         ShowTaskList(lTasks, iSelection);
                         break;
                     case 6:
-                        MarkTaskAsFinished(lTasks);//hatalÄ±
+                        MarkTaskAsFinished(lTasks);//hatalı
                         break;
                     case 7:
                         SaveList(lTasks);
@@ -61,20 +62,20 @@ namespace prjToDoList
             string sText;
             DateTime sDueDate;
             bool sIsPriority, sIsFinished;
-            if ("listOfTask.txt".Length != 0)
+            if ("listOfTask.txt".Length != 0)//dosyanın boş olup olmadığını kontrol etmek için
             {
-                while (!sr.EndOfStream)
+                while (!sr.EndOfStream)//dosyanın sonuna kadar okumak için döngü
                 {
-                    sData = sr.ReadLine().Split(':');
-                    if (sData.Length == 4)
+                    sData = sr.ReadLine().Split(':');//her satırı okuyup ':' karakterine göre parçalayıp sDataya atıyoroz dizi şeklinde
+                    if (sData.Length == 4)//örnek olarak ilk satırda kullanacağımız bir veri yok, o satırı işlemek istemediğimizden böyle bir kontrol yapıyoruz
                     {
-                        sData[0] = sData[0].Substring(2, 15);
-                        sIsPriority = bool.Parse(sData[0].ToString().Trim());
+                        sData[0] = sData[0].Substring(2, 15);//satırların başındaki numara kısmını silmek için
+                        sIsPriority = bool.Parse(sData[0].ToString().Trim());//':' karakteri ile parçalandıktan sonra başta ve sondaki boşlukları silmek için trim kullandık
                         sIsFinished = bool.Parse(sData[1].ToString().Trim());
                         sDueDate = DateTime.Parse(sData[2].ToString().Trim());
                         sText = sData[3].Trim();
-                        clsTask task = new clsTask(sText, sDueDate, sIsPriority, sIsFinished);
-                        lTasks.Add(task);
+                        clsTask task = new clsTask(sText, sDueDate, sIsPriority, sIsFinished);//yeni nesne türetimi
+                        lTasks.Add(task);//o nesneyi listeye ekleme
                     }
                 }
             }
@@ -86,7 +87,7 @@ namespace prjToDoList
             string sText;
             DateTime dtDueDate;
             bool bIsPriority = false;
-            Console.WriteLine("Enter the text of task: ");
+            Console.WriteLine("Enter the text of task: ");//yeni nesnenin verilerinin giriş yapılması
             sText = Console.ReadLine();
 
             Console.WriteLine("Enter the due date of task(ex. 22/11/1963): ");
@@ -98,7 +99,7 @@ namespace prjToDoList
                 bIsPriority = true;
             }
 
-            clsTask task = new clsTask(sText, dtDueDate, bIsPriority, false);
+            clsTask task = new clsTask(sText, dtDueDate, bIsPriority, false);//yeni nesne türetip listeye ekleniyor
             lTasks.Add(task);
 
             Console.WriteLine("task added!");
@@ -110,7 +111,7 @@ namespace prjToDoList
             switch (iSelection)
             {
                 case 2:
-                    foreach (clsTask task in lTasks)
+                    foreach (clsTask task in lTasks)//biten görevleri geçiçi listeye alan işlem
                     {
                         if (task.bIsFinished == true)
                         {
@@ -119,7 +120,7 @@ namespace prjToDoList
                     }
                     break;
                 case 3:
-                    foreach (clsTask task in lTasks)
+                    foreach (clsTask task in lTasks)//bitmemiş görevleri geçici listeye alan işlem
                     {
                         if (task.bIsFinished == false)
                         {
@@ -128,10 +129,10 @@ namespace prjToDoList
                     }
                     break;
                 case 4:
-                    lTempTasks = CompareTasksDueDate(lTasks);
+                    lTempTasks = CompareTasksDueDate(lTasks);//listedekilerin zamana göre sıralanması için fonksiyon çağrılıyor
                     break;
                 case 5:
-                    foreach (clsTask task in lTasks)
+                    foreach (clsTask task in lTasks)//önceliği olan görevleri geçici listeye alan işlem
                     {
                         if (task.bIsPriority == true)
                         {
@@ -140,19 +141,19 @@ namespace prjToDoList
                     }
                     break;
             }
-            Console.WriteLine("-------------------------------------------------------------------------------");
+            Console.WriteLine("-------------------------------------------------------------------------------");//geçici listeyi ekrana yazdırıyoruz
             Console.WriteLine(string.Format("  {0,-15} | {1,-20} | {2,-50}", "Priority", "Due Date", "Text"));
             foreach (clsTask task in lTempTasks)
             {
 
                 Console.WriteLine(string.Format(iOrdinal + " {0,-15} : {1,-20} : {2,-40}", task.bIsPriority, (task.dtDueDate.ToString()).Substring(0, 10), task.sText));
-                iOrdinal++;
+                iOrdinal++;//sıra numarası her satır yazdırıldıktan sonra artırılıyor
             }
             Console.WriteLine("-------------------------------------------------------------------------------");
         }
         public static List<clsTask> CompareTasksDueDate(List<clsTask> lTasks)
         {
-            var lTempTasks1 = from task in lTasks
+            var lTempTasks1 = from task in lTasks//görevler zamana göre sıralanıp lTempTasks1 'e atanıyor
                               orderby task.dtDueDate
                               select task;
 
@@ -161,19 +162,27 @@ namespace prjToDoList
         public static void MarkTaskAsFinished(List<clsTask> lTasks)
         {
             int iSelection;
-            ShowTaskList(lTasks, 3);
+            List<clsTask> lTempTasks = new List<clsTask>();
+            foreach (clsTask task in lTasks)//bitmemiş görevleri geçici listeye alan işlem
+            {
+                if (task.bIsFinished == false)
+                {
+                    lTempTasks.Add(task);
+                }
+            }
+            ShowTaskList(lTasks, 3);//bitmemiş görevlerin ekranda gösterilmesi
             Console.WriteLine("which one do you want to mark as finished ?");
-            iSelection = int.Parse(Console.ReadLine()) - 1;
-            lTasks[iSelection].bIsFinished = true;
+            iSelection = int.Parse(Console.ReadLine()) - 1;//girilen değeri 1 eksilterek, iSelection'a atıyoruz.(1 eksiltme işlemi listede indisin 0'dam başlamasından)
+            lTempTasks[iSelection].bIsFinished = true;//istenilen seçimi bitti olarak işaretliyoruz
             Console.WriteLine("Task is finished! congratulations\n");
         }
         public static void SaveList(List<clsTask> lTasks)
         {
-            FileStream fs = new FileStream("listOfTask.txt", FileMode.Create, FileAccess.Write);
+            FileStream fs = new FileStream("listOfTask.txt", FileMode.OpenOrCreate, FileAccess.Write);
             StreamWriter sw = new StreamWriter(fs);
             int iOrdinal = 1;
             sw.WriteLine("  {0,-15} | {1,-20} | {2,-20} | {3,-50}", "Priority", "Finished", "Due Date", "Text");
-            foreach (clsTask task in lTasks)
+            foreach (clsTask task in lTasks)//görevlerin satırlar halinde istenilen formatta dosyaya yazdırılması
             {
                 sw.WriteLine(iOrdinal + " {0,-15} : {1,-20} : {2,-20} : {3,-40}", task.bIsPriority, task.bIsFinished, (task.dtDueDate.ToString()).Substring(0, 10), task.sText);
                 iOrdinal++;
