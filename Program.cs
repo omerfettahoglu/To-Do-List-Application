@@ -153,7 +153,7 @@ namespace prjToDoList
         }
         public static List<clsTask> CompareTasksDueDate(List<clsTask> lTasks)
         {
-            var lTempTasks1 = from task in lTasks
+            var lTempTasks1 = from task in lTasks//görevler zamana göre sıralanıp lTempTasks1 'e atanıyor
                               orderby task.dtDueDate
                               select task;
 
